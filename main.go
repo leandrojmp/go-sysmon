@@ -14,6 +14,7 @@ func handleRequests() {
 
 	apiRouter.HandleFunc("/", routes.LandingPage)
 	apiRouter.HandleFunc("/netstat/{port}", routes.ReturnSinglePort)
+	apiRouter.HandleFunc("/netstat", routes.ReturnAllPorts)
 
 	log.Fatal(http.ListenAndServe(":5000", apiRouter))
 }
