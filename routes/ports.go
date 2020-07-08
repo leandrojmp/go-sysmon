@@ -7,8 +7,6 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
-
-	"github.com/gorilla/mux"
 )
 
 // SinglePort estrutura da resposta
@@ -20,22 +18,22 @@ type SinglePort struct {
 	Status  string `json:"status"`
 }
 
-func testResponse(port int64) SinglePort {
-	var testResponse SinglePort
-	testResponse.DstIP = "192.168.0.1"
-	testResponse.DstPort = port
-	testResponse.Status = "LISTENING"
-	testResponse.SrcIP = "10.0.0.10"
-	testResponse.SrcPort = 5015
-	return testResponse
-}
+// func testResponse(port int64) SinglePort {
+// 	var testResponse SinglePort
+// 	testResponse.DstIP = "192.168.0.1"
+// 	testResponse.DstPort = port
+// 	testResponse.Status = "LISTENING"
+// 	testResponse.SrcIP = "10.0.0.10"
+// 	testResponse.SrcPort = 5015
+// 	return testResponse
+// }
 
 // ReturnSinglePort retorna apenas uma porta
-func ReturnSinglePort(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	key, _ := strconv.Atoi(vars["port"])
-	json.NewEncoder(w).Encode(testResponse(int64(key)))
-}
+// func ReturnSinglePort(w http.ResponseWriter, r *http.Request) {
+// 	vars := mux.Vars(r)
+// 	key, _ := strconv.Atoi(vars["port"])
+// 	json.NewEncoder(w).Encode(testResponse(int64(key)))
+// }
 
 // ReturnAllPorts retorna todas as portas
 func ReturnAllPorts(w http.ResponseWriter, r *http.Request) {
@@ -59,10 +57,39 @@ func ReturnAllPorts(w http.ResponseWriter, r *http.Request) {
 		var testResponse SinglePort
 		testResponse.DstIP = remoteIP
 		testResponse.DstPort = remotePort
-		testResponse.Status = "LISTENING"
 		testResponse.SrcIP = localIP
 		testResponse.SrcPort = localPort
+		var connectionCode string = strings.Split(strings.TrimSpace(line), " ")[3]
+		var connectionState string
+		switch connectionCode {
+		case "01":
+			connectionState = "ESTABLISHED"
+		case "02":
+			connectionState = "SYN_SENT"
+		case "03":
+			connectionState = "SYN_RECV"
+		case "04":
+			connectionState = "FIN_WAIT1"
+		case "05":
+			connectionState = "FIN_WAIT2"
+		case "06":
+			connectionState = "TIME_WAIT"
+		case "07":
+			connectionState = "CLOSE"
+		case "08":
+			connectionState = "CLOSE_WAIT"
+		case "09":
+			connectionState = "LAST_ACK"
+		case "0A":
+			connectionState = "LISTENING"
+		case "0B":
+			connectionState = "CLOSING"
+		default:
+			connectionState = "UNKOWN_STATE"
+		}
+		testResponse.Status = connectionState
 		jsonResponse = append(jsonResponse, testResponse)
+		// fmt.Println(connectionCode, connectionState)
 	}
 	fmt.Println("/netstat: ReturnAllPorts")
 	json.NewEncoder(w).Encode(jsonResponse)
