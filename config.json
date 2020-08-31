@@ -1,3 +1,4 @@
 {
-    "tcpFile": "/proc/net/tcp"
+    "TCPFile": "/proc/net/tcp",
+    "ListenAddress": ":5000"
 }
