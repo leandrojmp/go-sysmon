@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/leandrojmp/go-sysmon/config"
 	"github.com/leandrojmp/go-sysmon/routes"
 )
 
@@ -16,9 +17,10 @@ func handleRequests() {
 	apiRouter.HandleFunc("/netstat/{port}", routes.ReturnSinglePort)
 	apiRouter.HandleFunc("/netstat", routes.ReturnAllPorts)
 
-	log.Fatal(http.ListenAndServe(":5000", apiRouter))
+	log.Fatal(http.ListenAndServe(config.Configuration.ListenAddress, apiRouter))
 }
 
 func main() {
+	config.LoadConfig("config.json")
 	handleRequests()
 }

@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/gorilla/mux"
+	"github.com/leandrojmp/go-sysmon/config"
 )
 
 // SinglePort estrutura da resposta
@@ -22,7 +23,7 @@ type SinglePort struct {
 
 // ReturnAllPorts retorna todas as portas
 func ReturnAllPorts(w http.ResponseWriter, r *http.Request) {
-	content, err := ioutil.ReadFile("/proc/net/tcp")
+	content, err := ioutil.ReadFile(config.Configuration.TCPFile)
 	if err != nil {
 		fmt.Println("error:", err)
 	}
@@ -55,7 +56,7 @@ func ReturnAllPorts(w http.ResponseWriter, r *http.Request) {
 func ReturnSinglePort(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	port, _ := strconv.Atoi(vars["port"])
-	content, err := ioutil.ReadFile("/proc/net/tcp")
+	content, err := ioutil.ReadFile(config.Configuration.TCPFile)
 	if err != nil {
 		fmt.Println("error:", err)
 	}
