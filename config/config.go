@@ -14,22 +14,6 @@ type Config struct {
 	TCPFile       string
 }
 
-//WarnLogger warning logs
-//InfoLogger info logs
-//ErrLogger warning logs
-var (
-	WarnLogger *log.Logger
-	InfoLogger *log.Logger
-	ErrLogger  *log.Logger
-)
-
-//CreateLoggers cria loggers
-func CreateLoggers() {
-	InfoLogger = log.New(os.Stderr, "INFO: ", log.Lmsgprefix|log.LstdFlags|log.Lmicroseconds|log.Lshortfile)
-	WarnLogger = log.New(os.Stderr, "WARNING: ", log.Lmsgprefix|log.LstdFlags|log.Lmicroseconds|log.Lshortfile)
-	ErrLogger = log.New(os.Stderr, "ERROR: ", log.Lmsgprefix|log.LstdFlags|log.Lmicroseconds|log.Lshortfile)
-}
-
 //Configuration values
 var Configuration Config
 
@@ -40,4 +24,20 @@ func LoadConfig(configFile string) {
 		fmt.Println("error:", err)
 	}
 	json.Unmarshal([]byte(content), &Configuration)
+}
+
+//WarnLogger warning logs
+var WarnLogger *log.Logger
+
+//InfoLogger info logs
+var InfoLogger *log.Logger
+
+//ErrLogger error logs
+var ErrLogger *log.Logger
+
+//CreateLoggers cria loggers
+func CreateLoggers() {
+	InfoLogger = log.New(os.Stderr, "INFO: ", log.Lmsgprefix|log.LstdFlags|log.Lmicroseconds|log.Lshortfile)
+	WarnLogger = log.New(os.Stderr, "WARNING: ", log.Lmsgprefix|log.LstdFlags|log.Lmicroseconds|log.Lshortfile)
+	ErrLogger = log.New(os.Stderr, "ERROR: ", log.Lmsgprefix|log.LstdFlags|log.Lmicroseconds|log.Lshortfile)
 }
