@@ -21,6 +21,8 @@ func handleRequests() {
 }
 
 func main() {
+	config.CreateLoggers()
 	config.LoadConfig("config.json")
+	config.InfoLogger.Print("application started")
 	handleRequests()
 }

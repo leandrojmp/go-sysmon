@@ -48,7 +48,7 @@ func ReturnAllPorts(w http.ResponseWriter, r *http.Request) {
 		testResponse.Status = connectionCode(strings.Split(strings.TrimSpace(line), " ")[3])
 		jsonResponse = append(jsonResponse, testResponse)
 	}
-	fmt.Println("/netstat: ReturnAllPorts")
+	config.InfoLogger.Print("/netstat - ReturnAllPorts")
 	json.NewEncoder(w).Encode(jsonResponse)
 }
 
@@ -84,7 +84,7 @@ func ReturnSinglePort(w http.ResponseWriter, r *http.Request) {
 		testResponse.Status = connectionCode(strings.Split(strings.TrimSpace(line), " ")[3])
 		jsonResponse = append(jsonResponse, testResponse)
 	}
-	fmt.Println("/netstat: ReturnSinglePort")
+	config.InfoLogger.Print("/netstat - ReturnSinglePort")
 	json.NewEncoder(w).Encode(jsonResponse)
 }
 
