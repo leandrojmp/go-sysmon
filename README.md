@@ -21,3 +21,9 @@ A API por padrão escuta na porta `5000` e responde em dois endpoints.
 - `/netstat` - retorna as conexões para todas as portas
 - `/netstat/port` - retorna as conexões apenas para a porta especificada.
 
+Os campos retornados em cada objeto json são:
+- `srcip` - _source ip_, ip de origem da conexão, o ip local da máquina.
+- `scrport` - _source port_, a porta local na máquina.
+- `dstip` - _destination ip_, o ip de destino da conexão, o ip remoto.
+- `dstport` - _destination port_ , a porta remota.
+- `status` - o _status_ da conexão.
