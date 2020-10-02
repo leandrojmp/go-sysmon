@@ -31,25 +31,11 @@ func ReturnAllPorts(w http.ResponseWriter, r *http.Request) {
 
 	lines = lines[1 : len(lines)-1]
 
-	var jsonResponse []SinglePort
+	portsResponse := portLoop(lines, 0, false)
 
-	for _, line := range lines {
-		var localIP string = strings.Split(strings.Split(strings.TrimSpace(line), " ")[1], ":")[0]
-		localIP = convertIP(localIP)
-		localPort, _ := strconv.ParseInt(strings.Split(strings.Split(strings.TrimSpace(line), " ")[1], ":")[1], 16, 64)
-		var remoteIP string = strings.Split(strings.Split(strings.TrimSpace(line), " ")[2], ":")[0]
-		remoteIP = convertIP(remoteIP)
-		remotePort, _ := strconv.ParseInt(strings.Split(strings.Split(strings.TrimSpace(line), " ")[2], ":")[1], 16, 64)
-		var testResponse SinglePort
-		testResponse.DstIP = remoteIP
-		testResponse.DstPort = remotePort
-		testResponse.SrcIP = localIP
-		testResponse.SrcPort = localPort
-		testResponse.Status = connectionCode(strings.Split(strings.TrimSpace(line), " ")[3])
-		jsonResponse = append(jsonResponse, testResponse)
-	}
 	config.InfoLogger.Print("/netstat - ReturnAllPorts")
-	json.NewEncoder(w).Encode(jsonResponse)
+
+	json.NewEncoder(w).Encode(portsResponse)
 }
 
 // ReturnSinglePort returns only one port
@@ -64,14 +50,25 @@ func ReturnSinglePort(w http.ResponseWriter, r *http.Request) {
 
 	lines = lines[1 : len(lines)-1]
 
+	portsResponse := portLoop(lines, port, true)
+
+	config.InfoLogger.Print("/netstat - ReturnSinglePort")
+
+	json.NewEncoder(w).Encode(portsResponse)
+}
+
+func portLoop(ports []string, single int, isSingle bool) []SinglePort {
+
 	var jsonResponse []SinglePort
 
-	for _, line := range lines {
+	for _, line := range ports {
 		var localIP string = strings.Split(strings.Split(strings.TrimSpace(line), " ")[1], ":")[0]
 		localIP = convertIP(localIP)
 		localPort, _ := strconv.ParseInt(strings.Split(strings.Split(strings.TrimSpace(line), " ")[1], ":")[1], 16, 64)
-		if localPort != int64(port) {
-			continue
+		if isSingle == true {
+			if localPort != int64(single) {
+				continue
+			}
 		}
 		var remoteIP string = strings.Split(strings.Split(strings.TrimSpace(line), " ")[2], ":")[0]
 		remoteIP = convertIP(remoteIP)
@@ -84,8 +81,7 @@ func ReturnSinglePort(w http.ResponseWriter, r *http.Request) {
 		testResponse.Status = connectionCode(strings.Split(strings.TrimSpace(line), " ")[3])
 		jsonResponse = append(jsonResponse, testResponse)
 	}
-	config.InfoLogger.Print("/netstat - ReturnSinglePort")
-	json.NewEncoder(w).Encode(jsonResponse)
+	return jsonResponse
 }
 
 func connectionCode(cxcode string) string {
