@@ -3,6 +3,9 @@ package main
 import (
 	"log"
 	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/gorilla/mux"
 	"github.com/leandrojmp/go-sysmon/config"
@@ -21,8 +24,14 @@ func handleRequests() {
 }
 
 func main() {
-	config.CreateLoggers()
-	config.LoadConfig("config.json")
-	config.InfoLogger.Print("application started")
-	handleRequests()
+	exitSignal := make(chan os.Signal, 1)
+	signal.Notify(exitSignal, syscall.SIGINT, syscall.SIGTERM)
+	go func() {
+		config.CreateLoggers()
+		config.LoadConfig("config.json")
+		config.InfoLogger.Print("application started")
+		handleRequests()
+	}()
+	<-exitSignal
+	config.InfoLogger.Print("application stopped")
 }
