@@ -17,6 +17,7 @@ func handleRequests() {
 	apiRouter := mux.NewRouter().StrictSlash(true)
 
 	apiRouter.HandleFunc("/", routes.LandingPage)
+	apiRouter.HandleFunc("/exit", routes.KillSwitch)
 	apiRouter.HandleFunc("/netstat/{port}", routes.ReturnSinglePort)
 	apiRouter.HandleFunc("/netstat", routes.ReturnAllPorts)
 
